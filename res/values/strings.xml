@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SkiPhone</string>
+    <string name="enable_button">Enable SkiPhone</string>
+    <string name="disable_button">Disable SkiPhone</string>
+    <string name="vertical_shake">Shake the phone up and down to launch voice actions or answer/hangup the phone.</string>
+    <string name="horizontal_shake">Shake the phone front to back to take a picture.</string>
+    <string name="enabled">SkiPhone enabled</string>
+    <string name="notification">Select to configure SkiPhone.</string>
+    <string name="screen_cancel">Turn off screen to cancel.</string>
+    <string name="shake_cancel">Shake front to back again to cancel.</string>
+    <string name="shake_exit">Photo saved. Shake front to back to exit.</string>
+    <string name="rate">Rate the app</string>
+    <string name="feedback">Send feedback</string>
+</resources>

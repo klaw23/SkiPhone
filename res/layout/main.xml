@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"    
+    android:background="#000000"
+    >
+
+	<LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:layout_marginTop="20dp"
+	    >
+	
+	  <TextView
+	      android:text="@string/vertical_shake"
+	      android:layout_width="fill_parent"
+	      android:layout_height="wrap_content"
+	      android:drawableLeft="@drawable/vertical_shake"
+	      android:gravity="center_vertical"
+	      android:paddingBottom="10dp"
+	      android:textColor="#ffffff"
+	      />
+	
+	  <TextView
+	      android:text="@string/horizontal_shake"
+	      android:layout_width="fill_parent"
+	      android:layout_height="wrap_content"
+	      android:drawableLeft="@drawable/horizontal_shake"
+	      android:gravity="center_vertical"
+	      android:textColor="#ffffff"
+	      />
+	      
+	  <Button 
+	      android:layout_height="wrap_content"
+		    android:id="@+id/toggle_button"
+		    android:text="@string/enable_button"
+		    android:layout_width="wrap_content"
+		    android:onClick="toggle"
+	      android:minWidth="200dp"
+	      android:minHeight="100dp"
+		    />
+		    
+	</LinearLayout>
+
+  <Button
+      android:id="@+id/rate_button"
+      android:text="@string/rate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_margin="10dp"
+      android:onClick="gotoMarket"
+      />
+
+  <Button
+      android:id="@+id/feedback_button"
+      android:text="@string/feedback"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_margin="10dp"
+      android:onClick="sendFeedback"
+      />
+
+</RelativeLayout>
