@@ -45,7 +45,7 @@ import android.widget.Toast;
 /**
  * The SkiPhone App. Allows the user to enable to disable SkiPhone.
  * 
- * TODO: The main UI and the camera should be separate activities.
+ * TODO(kevin): The main UI and the camera should be separate activities.
  * 
  * @author kevin@intercambly.com (Kevin Law)
  */
