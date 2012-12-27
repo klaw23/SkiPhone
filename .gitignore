@@ -1,0 +1,12 @@
+# Emacs
+.#*
+*~
+
+# Eclipse
+.project
+.settings
+
+# Generated files
+bin
+gen
+R.java
