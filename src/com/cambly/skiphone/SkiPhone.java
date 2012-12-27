@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -150,6 +151,42 @@ public class SkiPhone extends Activity implements PictureCallback {
 
     // Let go of the camera while we're in the background.
     releaseCamera();
+  }
+
+  /**
+   * Use volume buttons to simulate shakes.
+   */
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (!isEnabled) {
+      return false;
+    }
+
+    Intent intent;
+
+    switch (keyCode) {
+    case KeyEvent.KEYCODE_VOLUME_UP:
+      // Start the voice actions prompt.
+      intent = new Intent(Intent.ACTION_SEARCH_LONG_PRESS);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
+
+      // Show a toast with instructions on how to cancel.
+      Toast.makeText(this, R.string.screen_cancel, 5000).show();
+
+      return true;
+      
+    case KeyEvent.KEYCODE_VOLUME_DOWN:
+      // Open the app in camera mode.
+      intent = new Intent(this, SkiPhone.class);
+      intent.putExtra(SkiPhone.MODE_EXTRA, SkiPhone.CAMERA_MODE);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
+
+      return true;
+    }
+    
+    return false;
   }
 
   private void setupCamera() {
