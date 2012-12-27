@@ -34,13 +34,12 @@ import android.widget.RelativeLayout;
  * 
  * @author kevin@intercambly.com (Kevin Law)
  */
-public class CameraView extends RelativeLayout 
-    implements SurfaceHolder.Callback {
+public class CameraView extends RelativeLayout implements SurfaceHolder.Callback {
   private static final String LOG_PREFIX = "CameraView";
 
   /* Contains the camera preview. */
   private SurfaceView surfaceView;
-  
+
   /* Handles callbacks from the surface. */
   private SurfaceHolder holder;
 
@@ -49,7 +48,7 @@ public class CameraView extends RelativeLayout
 
   /* Preview sizes supported by the camera. */
   private List<Size> supportedPreviewSizes;
-  
+
   /* Image sizes supported by the camera. */
   private List<Size> supportedPictureSizes;
 
@@ -59,17 +58,17 @@ public class CameraView extends RelativeLayout
 
   public CameraView(Context context) {
     super(context);
-    
+
     // Setup the surface view.
     surfaceView = new SurfaceView(context);
     addView(surfaceView);
-    
+
     // Setup surface callbacks.
     holder = surfaceView.getHolder();
     holder.addCallback(this);
     holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
   }
-  
+
   /**
    * Set the camera used by the view.
    */
@@ -82,56 +81,52 @@ public class CameraView extends RelativeLayout
       requestLayout();
     }
   }
-  
+
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     // Disregard child measurements.
     final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-    final int height =
-      resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+    final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
     setMeasuredDimension(width, height);
-    
+
     if (supportedPictureSizes != null) {
       pictureSize = getOptimalPictureSize(supportedPictureSizes, width, height);
       if (supportedPreviewSizes != null) {
-        previewSize = getOptimalPreviewSize(supportedPreviewSizes, width,
-            height, (double) pictureSize.width / (double) pictureSize.height);
+        previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height,
+            (double) pictureSize.width / (double) pictureSize.height);
       }
     }
   }
 
   @Override
-  protected void onLayout(boolean changed, int left, int top, int right,
-      int bottom) {
+  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     if (changed && getChildCount() > 0) {
       final View child = getChildAt(0);
-      
+
       final int width = right - left;
       final int height = bottom - top;
-      
+
       int previewWidth = width;
       int previewHeight = height;
       if (previewSize != null) {
         previewWidth = previewSize.width;
         previewHeight = previewSize.height;
       }
-      
+
       // Center the child surface view within the parent.
       if (width * previewHeight > height * previewWidth) {
         final int scaledChildWidth = previewWidth * height / previewHeight;
-        child.layout((width - scaledChildWidth) / 2, 0,
-            (width + scaledChildWidth) / 2, height);
+        child.layout((width - scaledChildWidth) / 2, 0, (width + scaledChildWidth) / 2, height);
       } else {
         final int scaledChildHeight = previewHeight * width / previewWidth;
-        child.layout(0, (height - scaledChildHeight) / 2, width,
-            (height + scaledChildHeight) / 2);
+        child.layout(0, (height - scaledChildHeight) / 2, width, (height + scaledChildHeight) / 2);
       }
     }
 
   }
 
   public void surfaceCreated(SurfaceHolder holder) {
-    // Setup the camera preview.  Wait for the size parameters before starting
+    // Setup the camera preview. Wait for the size parameters before starting
     // it.
     try {
       if (camera != null) {
@@ -149,8 +144,7 @@ public class CameraView extends RelativeLayout
     }
   }
 
-  private Size getOptimalPreviewSize(List<Size> sizes, int width, int height,
-      double targetRatio) {
+  private Size getOptimalPreviewSize(List<Size> sizes, int width, int height, double targetRatio) {
     final double ASPECT_TOLERANCE = 0.1;
     if (sizes == null) {
       return null;
@@ -164,7 +158,8 @@ public class CameraView extends RelativeLayout
     // Try to find a size match for the aspect ratio and size
     for (Size size : sizes) {
       double ratio = (double) size.width / size.height;
-      if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+      if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+        continue;
       if (Math.abs(size.height - targetHeight) < minDiff) {
         optimalSize = size;
         minDiff = Math.abs(size.height - targetHeight);
@@ -181,9 +176,9 @@ public class CameraView extends RelativeLayout
         }
       }
     }
-    return optimalSize;  
+    return optimalSize;
   }
-  
+
   private Size getOptimalPictureSize(List<Size> sizes, int width, int height) {
     final double ASPECT_TOLERANCE = 0.1;
     double targetRatio = (double) width / height;
@@ -197,8 +192,9 @@ public class CameraView extends RelativeLayout
     // Try to find the largest match for the aspect ratio.
     for (Size size : sizes) {
       double ratio = (double) size.width / size.height;
-      if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-      if (size.height  > maxHeight) {
+      if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+        continue;
+      if (size.height > maxHeight) {
         optimalSize = size;
         maxHeight = size.height;
       }
@@ -214,45 +210,43 @@ public class CameraView extends RelativeLayout
         }
       }
     }
-    return optimalSize;  
+    return optimalSize;
   }
 
-  public void surfaceChanged(SurfaceHolder holder, int format, int width,
-      int height) {
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     // TODO: camera is null sometimes in 2.0.4.
     if (camera == null) {
       return;
     }
-    
+
     // Start the camera preview.
     Camera.Parameters parameters = camera.getParameters();
     parameters.setPreviewSize(previewSize.width, previewSize.height);
     parameters.setPictureSize(pictureSize.width, pictureSize.height);
     parameters.setJpegQuality(90);
-    Log.d(LOG_PREFIX, "Preview: " + previewSize.width  + "," +
-        previewSize.height + " Picture: " + pictureSize.width + "," +
-        pictureSize.height);
+    Log.d(LOG_PREFIX, "Preview: " + previewSize.width + "," + previewSize.height + " Picture: "
+        + pictureSize.width + "," + pictureSize.height);
     requestLayout();
     try {
       camera.cancelAutoFocus();
     } catch (RuntimeException e) {
       // No biggie. I guess we weren't focusing.
     }
-    // TODO: Fix this.  Sometimes the native camera code throws an exception
+    // TODO: Fix this. Sometimes the native camera code throws an exception
     // claiming that autofocus is still running even though we just cancelled
     // it.
     try {
-      camera.setParameters(parameters);      
+      camera.setParameters(parameters);
     } catch (RuntimeException e) {
       e.printStackTrace();
     }
     camera.startPreview();
-    
+
     // Give the user a couple seconds to aim and then focus the camera.
     DelayedCameraFocuser focuser = new DelayedCameraFocuser(camera);
     focuser.focusIn(2000);
   }
-  
+
   /**
    * 
    */
@@ -264,14 +258,14 @@ public class CameraView extends RelativeLayout
       this.camera = camera;
       handler = new Handler();
     }
-    
+
     public void onAutoFocus(boolean success, Camera camera) {
       if (!success) {
-        // Didn't work.  Try again.
+        // Didn't work. Try again.
         focus();
       }
     }
-    
+
     public void focusIn(int delayMillis) {
       handler.postDelayed(this, delayMillis);
     }
@@ -279,13 +273,13 @@ public class CameraView extends RelativeLayout
     public void run() {
       focus();
     }
-    
+
     private void focus() {
       try {
         camera.autoFocus(this);
       } catch (RuntimeException e) {
         // No biggie. The user probably canceled taking a picture.
-      }      
+      }
     }
   }
 }

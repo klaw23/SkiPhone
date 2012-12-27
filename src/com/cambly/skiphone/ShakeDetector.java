@@ -27,65 +27,64 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 /**
- * Listens for shakes using the accelerometer.  This class takes continuous
+ * Listens for shakes using the accelerometer. This class takes continuous
  * sensor readings over its lifetime, so it should be used sparingly to save
- * battery life.  Shake events are passed to the ShakeListener interface.
+ * battery life. Shake events are passed to the ShakeListener interface.
  * 
  * The detector remembers recent accelerometer readings projected into the XZ
  * (horizontal when phone is in hand) and XY planes (parallel to face of phone).
- * If the mean of recent readings exceeds the threshold, the callback for
- * larger reading is called and the sensor history is cleared. 
+ * If the mean of recent readings exceeds the threshold, the callback for larger
+ * reading is called and the sensor history is cleared.
  * 
  * @author kevin@intercambly.com (Kevin Law)
  */
 public class ShakeDetector implements SensorEventListener {
   public interface ShakeListener {
     void onVerticalShake();
+
     void onHorizontalShake();
   }
-  
+
   private final static String LOG_PREFIX = "ShakeDetector";
-  
+
   /* Minimum squared sensor values to trigger shake events. */
   private final static float HORIZONTAL_THRESHOLD = 200.0f;
   private final static float VERTICAL_THRESHOLD = 200.0f;
-  
+
   /* The number of sensor readings to use to compute the mean. */
   private final static int SENSOR_HISTORY = 5;
-  
+
   /* The minimum amount of time to wait between events in ms. */
   private final static long WAIT_TIME = 2000;
-  
+
   private final ShakeListener listener;
-  
+
   /* Used to access the accelerometer. */
   private SensorManager sensorManager;
-  
+
   /* History of recent sensor readings. */
   private LinkedList<Float> previousXYSensorValues = new LinkedList<Float>();
   private LinkedList<Float> previousXZSensorValues = new LinkedList<Float>();
-  
+
   /* The time of the last shake event. */
   private long lastEvent = 0;
-  
+
   public ShakeDetector(Context context, ShakeListener listener) {
-    this.listener = listener;    
-    sensorManager =
-      (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+    this.listener = listener;
+    sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
   }
-  
+
   /**
    * Call to start taking readings from the accelerometer.
    */
   public void start() {
     // Start listening to the accelerometer.
-    sensorManager.registerListener(this,
-        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-        SensorManager.SENSOR_DELAY_NORMAL);    
+    sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+        SensorManager.SENSOR_DELAY_NORMAL);
   }
-  
+
   /**
-   * Call to stop taking readings from the accelerometer.  This should be called
+   * Call to stop taking readings from the accelerometer. This should be called
    * when the object is no longer needed to save battery life.
    */
   public void stop() {
@@ -97,14 +96,13 @@ public class ShakeDetector implements SensorEventListener {
   }
 
   public void onSensorChanged(SensorEvent event) {
-    Log.d(LOG_PREFIX, "Sensor changed: " + Arrays.toString(event.values) +
-        " : " + event.accuracy);
-    
+    Log.d(LOG_PREFIX, "Sensor changed: " + Arrays.toString(event.values) + " : " + event.accuracy);
+
     // Don't trigger shake events if one was triggered recently.
     if (System.currentTimeMillis() - lastEvent < WAIT_TIME) {
       return;
     }
-    
+
     if (previousXYSensorValues.size() == SENSOR_HISTORY) {
       previousXYSensorValues.removeFirst();
       previousXZSensorValues.removeFirst();
@@ -112,43 +110,38 @@ public class ShakeDetector implements SensorEventListener {
     float squaredXSensorValue = sqr(event.values[0]);
     previousXYSensorValues.add(sqr(event.values[1]) + squaredXSensorValue);
     previousXZSensorValues.add(sqr(event.values[2]) + squaredXSensorValue);
-    
+
     float xyMeanSquared = mean(previousXYSensorValues);
     float xzMeanSquared = mean(previousXZSensorValues);
 
-    Log.d(LOG_PREFIX, "Sensor means: XY: " + xyMeanSquared +
-        " XZ: " + xzMeanSquared);
-    
+    Log.d(LOG_PREFIX, "Sensor means: XY: " + xyMeanSquared + " XZ: " + xzMeanSquared);
+
     // Notify the appropriate listener if the shaking exceeds the threshold in
-    // only one plane.  If it exceeds the threshold in multiple planes then wait
+    // only one plane. If it exceeds the threshold in multiple planes then wait
     // until the shaking isn't in an ambiguous direction.
     // TODO: Maybe set a lower ambiguity threshold?
     if (xyMeanSquared > xzMeanSquared) {
-      if (xyMeanSquared > VERTICAL_THRESHOLD &&
-          xzMeanSquared < HORIZONTAL_THRESHOLD) {
+      if (xyMeanSquared > VERTICAL_THRESHOLD && xzMeanSquared < HORIZONTAL_THRESHOLD) {
         lastEvent = System.currentTimeMillis();
-        Log.d(LOG_PREFIX, "Vertical shake: v=" + xyMeanSquared + ", h="
-            + xzMeanSquared);
+        Log.d(LOG_PREFIX, "Vertical shake: v=" + xyMeanSquared + ", h=" + xzMeanSquared);
         listener.onVerticalShake();
         clearHistory();
       }
     } else {
-      if (xzMeanSquared > HORIZONTAL_THRESHOLD &&
-          xyMeanSquared < VERTICAL_THRESHOLD) {
+      if (xzMeanSquared > HORIZONTAL_THRESHOLD && xyMeanSquared < VERTICAL_THRESHOLD) {
         lastEvent = System.currentTimeMillis();
-        Log.d(LOG_PREFIX, "Horizontal shake: v=" + xyMeanSquared + ", h="
-            + xzMeanSquared);
+        Log.d(LOG_PREFIX, "Horizontal shake: v=" + xyMeanSquared + ", h=" + xzMeanSquared);
         listener.onHorizontalShake();
         clearHistory();
       }
     }
   }
-  
+
   private void clearHistory() {
     previousXYSensorValues.clear();
     previousXZSensorValues.clear();
   }
-  
+
   private static float mean(List<Float> list) {
     float sum = 0;
     for (float item : list) {
@@ -156,7 +149,7 @@ public class ShakeDetector implements SensorEventListener {
     }
     return sum / list.size();
   }
-  
+
   private static float sqr(float x) {
     return x * x;
   }
