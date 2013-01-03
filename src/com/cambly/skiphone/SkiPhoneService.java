@@ -228,7 +228,7 @@ public class SkiPhoneService extends Service implements ShakeListener {
       startActivity(intent);
 
       // Show a toast with instructions on how to cancel.
-      Toast.makeText(this, R.string.screen_cancel, 5000).show();
+      Toast.makeText(this, R.string.screen_cancel, Toast.LENGTH_LONG).show();
     }
   }
 
@@ -241,8 +241,7 @@ public class SkiPhoneService extends Service implements ShakeListener {
     vibrator.vibrate(500);
 
     // Open the app in camera mode.
-    Intent intent = new Intent(this, SkiPhone.class);
-    intent.putExtra(SkiPhone.MODE_EXTRA, SkiPhone.CAMERA_MODE);
+    Intent intent = new Intent(this, CameraActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
