@@ -81,37 +81,37 @@ public class SkiPhone extends Activity {
   /**
    * Use volume buttons to simulate shakes.
    */
-  @Override
-  public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (!isEnabled) {
-      return false;
-    }
-
-    Intent intent;
-
-    switch (keyCode) {
-    case KeyEvent.KEYCODE_VOLUME_UP:
-      // Start the voice actions prompt.
-      intent = new Intent(Intent.ACTION_SEARCH_LONG_PRESS);
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-      startActivity(intent);
-
-      // Show a toast with instructions on how to cancel.
-      Toast.makeText(this, R.string.screen_cancel, Toast.LENGTH_LONG).show();
-
-      return true;
-      
-    case KeyEvent.KEYCODE_VOLUME_DOWN:
-      // Open the app in camera mode.
-      intent = new Intent(this, CameraActivity.class);
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-      startActivity(intent);
-
-      return true;
-    }
-    
-    return false;
-  }
+//  @Override
+//  public boolean onKeyDown(int keyCode, KeyEvent event) {
+//    if (!isEnabled) {
+//      return false;
+//    }
+//
+//    Intent intent;
+//
+//    switch (keyCode) {
+//    case KeyEvent.KEYCODE_VOLUME_UP:
+//      // Start the voice actions prompt.
+//      intent = new Intent(Intent.ACTION_SEARCH_LONG_PRESS);
+//      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//      startActivity(intent);
+//
+//      // Show a toast with instructions on how to cancel.
+//      Toast.makeText(this, R.string.screen_cancel, Toast.LENGTH_LONG).show();
+//
+//      return true;
+//      
+//    case KeyEvent.KEYCODE_VOLUME_DOWN:
+//      // Open the app in camera mode.
+//      intent = new Intent(this, CameraActivity.class);
+//      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//      startActivity(intent);
+//
+//      return true;
+//    }
+//    
+//    return false;
+//  }
 
   /** Turn SkiPhone on and off. */
   public void toggle(View view) {
