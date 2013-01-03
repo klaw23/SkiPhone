@@ -27,6 +27,7 @@ import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -164,12 +165,15 @@ public class CameraActivity extends Activity implements PictureCallback {
     cancelAutoFocus();
 
     try {
+      String path = Environment.getExternalStoragePublicDirectory(
+          Environment.DIRECTORY_PICTURES).toString();
+      
       // Make sure photo directory exists.
-      File photoDir = new File("/sdcard/DCIM/SkiPhone");
+      File photoDir = new File(path + "/SkiPhone");
       photoDir.mkdir();
 
       // Write the image to the sdcard.
-      File photoFile = new File(String.format("/sdcard/DCIM/SkiPhone/skiphone-%d.jpg",
+      File photoFile = new File(String.format(photoDir.toString() + "/skiphone-%d.jpg",
           System.currentTimeMillis()));
       FileOutputStream fos = new FileOutputStream(photoFile);
       fos.write(data);
