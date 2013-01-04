@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -182,6 +183,12 @@ public class CameraActivity extends Activity implements PictureCallback {
       // Notify the media store, so it shows up in the gallery.
       MediaStore.Images.Media.insertImage(getContentResolver(), photoFile.getAbsolutePath(),
           photoFile.getName(), photoFile.getName());
+      
+      // This seems to be needed to make the skiphone album show up.
+      Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+      Uri contentUri = Uri.fromFile(photoFile);
+      mediaScanIntent.setData(contentUri);
+      this.sendBroadcast(mediaScanIntent);
 
       // Show a toast with instructions on how to exit.
       Toast.makeText(this, R.string.shake_exit, Toast.LENGTH_LONG).show();
